@@ -1,0 +1,146 @@
+﻿@model Appointly.Models.Users
+
+@{
+    ViewData["Title"] = "Register";
+}
+<link rel="stylesheet" href="~/css/Register.css" />
+
+<div class="row py-5 mt-4 align-items-center">
+    <div class="col-md-5 pr-lg-5 mb-5 mb-md-0">
+        <img src="https://res.cloudinary.com/mhmd/image/upload/v1569543678/form_d9sh6m.svg" alt="" class="img-fluid mb-3 d-none d-md-block">
+        <h1>Create an Account</h1>
+    </div>
+
+    <!-- Registeration Form -->
+    <div class="col-md-7 col-lg-6 ml-auto">
+        <form asp-action="Register">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group input-group col-lg-12 mb-4">
+                <div class="input-group-prepend">
+                    <span class="input-group-text bg-white px-4 border-md border-right-0">
+                        <i class="fa fa-black-tie text-muted"></i>
+                    </span>
+                </div>
+                <select id="job" asp-for="User_Role" name="User_Role" class="form-control custom-select bg-white border-left-0 border-md">
+                    <option selected disabled value="none"><span class="text-light">Choose your Role</span></option>
+                    <option value="visitor">Visitor</option>
+                    <option value="faculty">Faculty</option>
+                    <option value="admin">Admin</option>
+                </select>
+                <span asp-validation-for="User_Role" class="text-danger"></span>
+            </div>
+
+            <div class="form-group input-group col-lg-12 mb-4">
+                <div class="input-group-prepend">
+                    <span class="input-group-text bg-white px-4 border-md border-right-0">
+                        <i class="fa fa-user text-muted"></i>
+                    </span>
+                </div>
+                <input asp-for="FirstName" placeholder="FirstName" class="form-control bg-white border-left-0 border-md" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group input-group col-lg-12 mb-4">
+                <div class="input-group-prepend">
+                    <span class="input-group-text bg-white px-4 border-md border-right-0">
+                        <i class="fa fa-user text-muted"></i>
+                    </span>
+                </div>
+                <input asp-for="LastName" placeholder="LastName" class="form-control bg-white border-left-0 border-md" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group input-group col-lg-12 mb-4">
+                <div class="input-group-prepend">
+                    <span class="input-group-text bg-white px-4 border-md border-right-0">
+                        <i class="fa fa-envelope text-muted"></i>
+                    </span>
+                </div>
+                <input asp-for="Email" placeholder="Email" class="form-control bg-white border-left-0 border-md" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="form-group input-group col-lg-12 mb-4">
+                <div class="input-group-prepend">
+                    <span class="input-group-text bg-white px-4 border-md border-right-0">
+                        <i class="fa fa-phone-square text-muted"></i>
+                    </span>
+                </div>
+                <input asp-for="Phone" placeholder="Phone" class="form-control bg-white border-left-0 border-md" />
+                <span asp-validation-for="Phone" class="text-danger"></span>
+            </div>
+            <div class="form-group input-group col-lg-12 mb-4">
+                <div class="input-group-prepend">
+                    <span class="input-group-text bg-white px-4 border-md border-right-0">
+                        <i class="fa fa-lock text-muted"></i>
+                    </span>
+                </div>
+                <input id="password" asp-for="Pwd" name="Pwd" placeholder="Password" class="form-control bg-white border-left-0 border-md" />
+                <span asp-validation-for="Pwd" class="text-danger"></span>
+            </div>
+            <div class="form-group input-group col-lg-12 mb-4">
+                <div class="input-group-prepend">
+                    <span class="input-group-text bg-white px-4 border-md border-right-0">
+                        <i class="fa fa-lock text-muted"></i>
+                    </span>
+                </div>
+                <input id="confirm_password" name="confirm_Pwd" type="password" placeholder="Confirm Password" class="form-control bg-white border-left-0 border-md">
+                <span id='message'></span>
+            </div>
+            <div id="dynamic" class="form-group input-group col-lg-12 mb-4">
+                <div class="input-group-prepend">
+                    <span class="input-group-text bg-white px-4 border-md border-right-0">
+                        <i class="fa fa-registered text-muted"></i>
+                    </span>
+                </div>
+                <input asp-for="Registration_Id" name="Registration_Id" placeholder="Registration_Id (Only for Faculty and Admin)" class="form-control bg-white border-left-0 border-md" />
+            </div>
+            <div class="form-group col-lg-12 mx-auto mb-0">
+                <input type="submit" value="Create your account" class="btn btn-primary btn-block font-weight-bold" />
+            </div>
+            <br />
+            <b id="getoff">@ViewBag.message</b>
+            <br />
+            <div class="text-center w-100">
+                <p class="text-muted font-weight-bold">Already Registered? <a href="Login" class="text-primary ml-2">Login</a></p>
+            </div>
+        </form>
+    </div>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+<script>
+    // For Demo Purpose [Changing input group text on focus]
+
+    $(document).ready(() => {
+        /*debugger*/
+        $('input, select').on('focus', () => {
+            $(this).parent().find('.input-group-text').css('border-color', '#80bdff');
+        });
+        $('input, select').on('blur', () => {
+            $(this).parent().find('.input-group-text').css('border-color', '#ced4da');
+        });
+        //make reg_no input box dissappear
+        $('#job').on('change', function (e) {
+            var optionSelected = $("option:selected", this);
+            var valueSelected = this.value;
+            //console.log(valueSelected);
+            if (valueSelected == "faculty" || valueSelected == "admin") {
+                $("#dynamic").show();
+            } else {
+                $("#dynamic").hide();
+            }
+        });
+        //check password and confirm password
+        $('#confirm_password').on('keyup', function () {
+            if ($('#password').val() == $('#confirm_password').val()) {
+                $('#message').html('Matching').css('color', 'green').show().delay(3000).fadeOut();
+            } else
+                $('#message').html('Not Matching').css('color', 'red').show();
+        });
+
+        $("#getoff").css('color', 'red').css('text','muted').show().delay(5000).fadeOut();
+    });
+</script>
+
