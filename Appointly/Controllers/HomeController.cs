@@ -146,15 +146,15 @@ namespace Appointly.Controllers
                     con.Close();
                     if(role == "visitor")
                     {
-                        return RedirectToAction("Dashboard","Visitor");
+                        return RedirectToAction("Index","Visitor");
                     }
                     else if(role == "faculty")
                     {
-                        return RedirectToAction("Dashboard","Faculty");
+                        return RedirectToAction("Index","Faculty");
                     }
                     else if(role == "admin")
                     {
-                        return RedirectToAction("Dashboard","Admin");
+                        return RedirectToAction("Index","Admin");
                     }
                     else
                     {

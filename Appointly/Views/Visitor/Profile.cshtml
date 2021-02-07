@@ -1,0 +1,48 @@
+﻿@model Appointly.Models.Users;
+@{
+    ViewData["Title"] = "Profile";
+    Layout = "~/Views/Shared/_Layout_Visitor.cshtml";
+}
+
+<h1> Edit</h1>
+<h4> Profile edit</h4>
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Profile">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="FirstName" class="control-label"></label>
+                <input asp-for="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" class="textdanger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LastName" class="control-label"></label>
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" class="textdanger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Phone" class="control-label"></label>
+                <input asp-for="Phone" class="form-control" />
+                <span asp-validation-for="Phone" class="textdanger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Gender" class="control-label"></label>
+                <input asp-for="Gender" class="form-control" />
+                <span asp-validation-for="Gender" class="textdanger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Date_of_birth" class="control-label"></label>
+                <input asp-for="Date_of_birth" class="form-control" />
+                <span asp-validation-for="Date_of_birth" class="textdanger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-success" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index"> back to Homepage</a>
+</div>

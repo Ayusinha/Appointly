@@ -1,0 +1,71 @@
+﻿@model IEnumerable<Appointly.Models.Users>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout_Visitor.cshtml";
+}
+
+<div class="container jumbotron table table-striped">
+    <div class="form-group">
+        <div class="input-group">
+            <span class="input-group-addon bg-white px-4 border-md border-right-0">
+                <i class="fa fa-search text-muted"></i>
+            </span>
+            <input type="text" id="search" placeholder="Search by First Name" class="form-control"/>
+        </div>
+    </div>
+    <h2>List of Faculties</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.LastName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Email)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Phone)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var uc in Model)
+            {
+            <tr class="search">
+                <td>
+                    @Html.DisplayFor(modelItem => uc.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => uc.LastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => uc.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => uc.Phone)
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<script>
+    $(document).ready(() => {
+        function Contains(text_2, text_1) {
+            if (text_1.indexOf(text_2) != -1) {
+                return true;
+            }
+        }
+        $("#search").keyup(() => {
+            var str = $("#search").val().toLowerCase();
+            $(".search").each(() => {
+                if (!Contains($(this).text().toLowerCase(), str)) {
+
+                }
+            });
+        });
+    });
+</script>

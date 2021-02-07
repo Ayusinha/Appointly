@@ -58,7 +58,7 @@ namespace Appointly
             {
                 endpoints.MapControllerRoute(
                     name: "visitor",
-                    pattern: "{controller=Visitor}/{action=Home}/{id?}");
+                    pattern: "{controller=Visitor}/{action=Index}/{id?}");
             });
         }
     }
