@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace Appointly.Controllers
 {
@@ -10,6 +11,11 @@ namespace Appointly.Controllers
     {
         public IActionResult Index()
         {
+            return View();
+        }
+        public IActionResult Dashboard()
+        {
+            string str = HttpContext.Session.GetString("User_Id");
             return View();
         }
     }

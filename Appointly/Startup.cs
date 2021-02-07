@@ -25,7 +25,10 @@ namespace Appointly
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddDbContext<ApplicationUser>(options => options.UseSqlServer(Configuration.GetConnectionString("Myconnection")));
+            services.AddSession(options => {
+                options.IdleTimeout = TimeSpan.FromDays(1);
+            });
+            //services.AddDbContext<ApplicationUser>(options => options.UseSqlServer(Configuration.GetConnectionString("Myconnection")));
             services.AddSingleton<IConfiguration>(Configuration);
         }
 
@@ -41,9 +44,8 @@ namespace Appointly
                 app.UseExceptionHandler("/Home/Error");
             }
             app.UseStaticFiles();
-
+            app.UseSession();
             app.UseRouting();
-
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
