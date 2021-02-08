@@ -59,7 +59,7 @@ namespace Appointly.Controllers
                 return RedirectToAction("Login", "Home");
             }
         }
-        public IActionResult Dashboard()
+        public IActionResult MyMeeting()
         {
             string str = HttpContext.Session.GetString("User_Id");
             return View();
@@ -146,6 +146,95 @@ namespace Appointly.Controllers
         {
             HttpContext.Session.Remove("User_Id");
             return RedirectToAction("Login", "Home");
+        }
+
+        public IActionResult Details(int? id)
+        {
+            List<Appointment> ap = new List<Appointment>();
+            string User_Id = HttpContext.Session.GetString("User_Id");
+            if (User_Id != null)
+            {
+                using (SqlConnection con = new SqlConnection(_connectionString))
+                {
+                    string faculty_name = "";
+                    SqlCommand cmd = new SqlCommand("sp_getnamebyid", con);
+                    cmd.Parameters.AddWithValue("@Id", id);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    con.Open();
+                    SqlDataReader dr = cmd.ExecuteReader();
+                    while (dr.Read())
+                    {
+                        faculty_name = (string)dr["FirstName"];
+                        faculty_name += " ";
+                        faculty_name += dr["LastName"];
+                    }
+                    con.Close();
+                    ViewBag.faculty_name = faculty_name;
+                    ViewBag.FId = id;
+
+                    SqlCommand cmd1 = new SqlCommand("sp_getmeetingdetail", con);
+                    cmd1.Parameters.AddWithValue("@fid", id);
+                    cmd1.CommandType = CommandType.StoredProcedure;
+
+                    con.Open();
+                    dr = cmd1.ExecuteReader();
+                    while (dr.Read())
+                    {
+                        Appointment uc = new Appointment();
+
+                        uc._From = (DateTime)dr["_From"];
+                        uc._To = (DateTime)dr["_To"];
+                        uc.Faculty_Id = (short)Convert.ToInt32(dr["faculty_Id"].ToString());
+
+                        ap.Add(uc);
+                    }
+                    con.Close();
+                }
+                List<Appointment> apList = new List<Appointment>();
+                apList = ap.ToList();
+                return View(apList);
+            }
+            else
+            {
+                return RedirectToAction("Login", "Home");
+            }
+        }
+        public IActionResult ScheduleAppointment(int id)
+        {
+            ViewBag.Fid = id;
+            ViewBag.Vid = HttpContext.Session.GetString("User_Id");
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ScheduleAppointment(Appointment ap)
+        {
+            //return Json(ap);
+            if (ModelState.IsValid)
+            {
+                SqlCommand cmd = new SqlCommand("sp_scheduleappointment", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@Visitor_Id", ap.Visitor_Id);
+                cmd.Parameters.AddWithValue("@Faculty_Id", ap.Faculty_Id);
+                cmd.Parameters.AddWithValue("@From", ap._From);
+                cmd.Parameters.AddWithValue("@To", ap._To);
+                cmd.Parameters.AddWithValue("@Purpose", ap.Purpose);
+
+                con.Open();
+                //if(user.Registration_Id!=null)
+
+                cmd.ExecuteNonQuery();
+                con.Close();
+
+                return RedirectToAction("Index", "Visitor");
+            }
+            else
+            {
+                ViewBag.message = "Something went wrong please try again.";
+                return View();
+            }
+
         }
     }
 }

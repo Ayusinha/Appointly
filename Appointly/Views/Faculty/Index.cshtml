@@ -1,0 +1,80 @@
+﻿@model IEnumerable<Appointly.Models.Appointment>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout_Visitor.cshtml";
+}
+
+<div class="dropdown">
+    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+        All Meetings
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <li><a class="dropdown-item" href="#">New Meetings</a></li>
+        <li><a class="dropdown-item" href="#">Approved</a></li>
+        <li><a class="dropdown-item" href="#">Declined</a></li>
+    </ul>
+</div>
+
+<div class="container jumbotron table table-striped">
+    <div class="form-group">
+        <input type="text" id="search" placeholder="Search by First Name" class="form-control" />
+    </div>
+
+    <h2>List of Meetings</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Visitor_Id.FirstName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model._From)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model._To)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Purpose)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Response)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var ap in Model)
+            {
+                var a = 0;
+                a += 1;
+                <tr class="search">
+                    <td>
+                        @a
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => ap.Visitor_Id.FirstName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => ap._From)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => ap._To)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => ap.Purpose)
+                    </td>
+                    <td>
+                        <div class="input-group">
+                            <span class="input-group-text">@Html.DisplayNameFor(model => model.Response)</span>
+                            <textarea class="form-control" aria-label="With textarea"></textarea>
+                        </div>
+                    </td>
+                    <td>
+                        <a class="btn btn-success" type="submit" value="Approved" role="button">Approve</a>
+                        <a class="btn btn-danger" type="submit" value="Declined" role="button">Decline</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -74,43 +74,42 @@ namespace Appointly.Controllers
             }
             //_auser.Add(uc);
             //_auser.SaveChanges();
-            using (SqlCommand cmd1 = new SqlCommand("sp_signin", con))
+            SqlCommand cmd1 = new SqlCommand("sp_signin", con);
+            cmd1.CommandType = CommandType.StoredProcedure;
+            cmd1.Parameters.AddWithValue("@Email", uc.Email);
+            cmd1.Parameters.AddWithValue("@Pwd", uc.Pwd);
+
+            con.Open();
+            SqlDataReader reader = cmd1.ExecuteReader();
+            if (reader.HasRows)
             {
-                cmd1.CommandType = CommandType.StoredProcedure;
-                cmd1.Parameters.AddWithValue("@Email", uc.Email);
-                cmd1.Parameters.AddWithValue("@Pwd", uc.Pwd);
-
-                con.Open();
-                SqlDataReader reader = cmd1.ExecuteReader();
-                if (reader.HasRows)
+                ViewBag.message = "Entered Email is already registered Please Login..";
+                con.Close();
+                return View();
+            }
+            else
+            {
+                con.Close();
+                if (ModelState.IsValid)
                 {
-                    ViewBag.message = "Entered Email is already registered Please Login..";
-                    return View();
-                }
-                else
-                {
-                    if (ModelState.IsValid)
-                    {
-                        SqlCommand cmd = new SqlCommand("sp_createuser", con);
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.AddWithValue("@FirstName", uc.FirstName);
-                        cmd.Parameters.AddWithValue("@LastName", uc.LastName);
-                        cmd.Parameters.AddWithValue("@Email", uc.Email);
-                        cmd.Parameters.AddWithValue("@Phone", uc.Phone);
-                        cmd.Parameters.AddWithValue("@Pwd", uc.Pwd);
-                        cmd.Parameters.AddWithValue("@User_Role", uc.User_Role);
-
-                        //if(user.Registration_Id!=null)
-                        cmd.Parameters.AddWithValue("@Registration_Id", uc.Registration_Id);
-                        cmd.ExecuteNonQuery();
-                        con.Close();
-
-                        return RedirectToAction("Login", "Home");
-                    }
+                    SqlCommand cmd = new SqlCommand("sp_createuser", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@FirstName", uc.FirstName);
+                    cmd.Parameters.AddWithValue("@LastName", uc.LastName);
+                    cmd.Parameters.AddWithValue("@Email", uc.Email);
+                    cmd.Parameters.AddWithValue("@Phone", uc.Phone);
+                    cmd.Parameters.AddWithValue("@Pwd", uc.Pwd);
+                    cmd.Parameters.AddWithValue("@User_Role", uc.User_Role);
+                    con.Open();
+                    //if(user.Registration_Id!=null)
+                    cmd.Parameters.AddWithValue("@Registration_Id", uc.Registration_Id);
+                    cmd.ExecuteNonQuery();
                     con.Close();
-                    ViewBag.message = "Something went wrong please try again.";
-                    return View();
+
+                    return RedirectToAction("Login", "Home");
                 }
+                ViewBag.message = "Something went wrong please try again.";
+                return View();
             }
         }
         [HttpGet]

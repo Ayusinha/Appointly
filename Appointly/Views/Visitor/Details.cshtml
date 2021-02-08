@@ -1,0 +1,42 @@
+﻿@model IEnumerable<Appointly.Models.Appointment>
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout_Visitor.cshtml";
+}
+
+<div class="container jumbotron table table-striped">
+    <div class="row">
+        <h5 class="col-9 pt-1"> You are viewing Schedule of : <b>@ViewBag.faculty_name</b></h5>
+        @foreach (var uc in Model)
+        {
+<a style="float: right;" class="btn btn-primary" href="/Visitor/ScheduleAppointment/@uc.Faculty_Id"> Schedule Appointment </a>break;
+            }
+    </div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model._From)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model._To)
+                </th>
+
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var uc in Model)
+            {
+                <tr class="search">
+                    <td>
+                        @Html.DisplayFor(modelItem => uc._From)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => uc._To)
+                    </td>
+                </tr> 
+            }
+        </tbody>
+    </table>
+</div>
