@@ -66,6 +66,11 @@ namespace Appointly.Controllers
         }
         public IActionResult Profile()
         {
+            string id = HttpContext.Session.GetString("User_Id");
+            if (id == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
             string userid = HttpContext.Session.GetString("User_Id");
             short userId = Convert.ToInt16(userid);
             //return Json(userId + 10); 
@@ -103,31 +108,36 @@ namespace Appointly.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Profile([Bind] Users userEmp)
         {
-            // return Json(userEmp);
-
-            if (ModelState.IsValid)
+            //return Json(userEmp);
+            string id = HttpContext.Session.GetString("User_Id");
+            if (id == null)
             {
-                using (SqlConnection con = new SqlConnection(_connectionString))
-                {
-                    SqlCommand cmd = new SqlCommand("sp_updateuser", con);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@Id", userEmp.Id);
-                    cmd.Parameters.AddWithValue("@FirstName", userEmp.FirstName);
-                    cmd.Parameters.AddWithValue("@LastName", userEmp.LastName);
-                    cmd.Parameters.AddWithValue("@Phone", userEmp.Phone);
-                    cmd.Parameters.AddWithValue("@Gender", userEmp.Gender);
-                    cmd.Parameters.AddWithValue("@Date_of_birth", userEmp.Date_of_birth);
-                    con.Open();
-                    cmd.ExecuteNonQuery();
-                    con.Close();
-                }
-                ViewBag.message = "Something went wrong please try again.";
-                return RedirectToAction("Index");
+                return RedirectToAction("Login", "Home");
             }
-            else
+            using (SqlConnection con = new SqlConnection(_connectionString))
             {
-                ViewBag.message = "Something went wrong please try again.";
-                return RedirectToAction("Index");
+                SqlCommand cmd = new SqlCommand("sp_updateuser", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@Id", userEmp.Id);
+                cmd.Parameters.AddWithValue("@FirstName", userEmp.FirstName);
+                cmd.Parameters.AddWithValue("@LastName", userEmp.LastName);
+                cmd.Parameters.AddWithValue("@Phone", userEmp.Phone);
+                cmd.Parameters.AddWithValue("@Date_of_birth", userEmp.Date_of_birth);
+                cmd.Parameters.AddWithValue("@Gender", userEmp.Gender);
+                con.Open();
+                int num = cmd.ExecuteNonQuery();
+                con.Close();
+
+                if (num != -1)
+                {
+                    ViewBag.message = "User Profile Updated...";
+                    return View();
+                }
+                else
+                {
+                    ViewBag.message = "Something went wrong please try again.";
+                    return View();
+                }
             }
         }
 
