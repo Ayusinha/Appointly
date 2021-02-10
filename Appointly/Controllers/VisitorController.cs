@@ -16,20 +16,18 @@ namespace Appointly.Controllers
         private readonly IConfiguration _configuration;
         private readonly string _connectionString;
         private readonly SqlConnection con;
-
-        public object Labelinfo { get; private set; }
-
         public VisitorController(IConfiguration iConfig)
         {
             _configuration = iConfig;
             _connectionString = _configuration.GetSection("ConnectionStrings").GetSection("Myconnection").Value;
             con = new SqlConnection(_connectionString);
         }
+
         public IActionResult Index()
         {
             List<Users> user = new List<Users>();
             string User_Id = HttpContext.Session.GetString("User_Id");
-            if(User_Id != null)
+            if(!string.IsNullOrWhiteSpace(User_Id))
             {
                 using (SqlConnection con = new SqlConnection(_connectionString))
                 {
@@ -56,28 +54,30 @@ namespace Appointly.Controllers
             }
             else
             {
-                return RedirectToAction("Login", "Home");
+                return NotFound();
             }
         }
+
         public IActionResult MyMeeting()
         {
-            string str = HttpContext.Session.GetString("User_Id");
-            return View();
-        }
-        public IActionResult Profile()
-        {
             string id = HttpContext.Session.GetString("User_Id");
-            if (id == null)
-            {
-                return RedirectToAction("Login", "Home");
-            }
-            string userid = HttpContext.Session.GetString("User_Id");
-            short userId = Convert.ToInt16(userid);
-            //return Json(userId + 10); 
-            if (userid == null)
+            if (string.IsNullOrWhiteSpace(id))
             {
                 return NotFound();
             }
+            short userId = Convert.ToInt16(id);
+
+            return View();
+        }
+
+        public IActionResult Profile()
+        {
+            string id = HttpContext.Session.GetString("User_Id");
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return NotFound();
+            }
+            short userId = Convert.ToInt16(id);
             Users uc = new Users();
             using (SqlConnection con = new SqlConnection(_connectionString))
             {
@@ -110,7 +110,7 @@ namespace Appointly.Controllers
         {
             //return Json(userEmp);
             string id = HttpContext.Session.GetString("User_Id");
-            if (id == null)
+            if (string.IsNullOrWhiteSpace(id))
             {
                 return RedirectToAction("Login", "Home");
             }
@@ -130,7 +130,7 @@ namespace Appointly.Controllers
 
                 if (num != -1)
                 {
-                    ViewBag.message = "User Profile Updated...";
+                    ViewBag.message = "User Profile Updated.";
                     return View();
                 }
                 else
@@ -141,18 +141,11 @@ namespace Appointly.Controllers
             }
         }
 
-        [HttpGet]
-        public IActionResult Logout()
-        {
-            HttpContext.Session.Remove("User_Id");
-            return RedirectToAction("Login", "Home");
-        }
-
         public IActionResult Details(int? id)
         {
             List<Appointment> ap = new List<Appointment>();
             string User_Id = HttpContext.Session.GetString("User_Id");
-            if (User_Id != null)
+            if (User_Id != "")
             {
                 using (SqlConnection con = new SqlConnection(_connectionString))
                 {
@@ -199,42 +192,73 @@ namespace Appointly.Controllers
                 return RedirectToAction("Login", "Home");
             }
         }
+
         public IActionResult ScheduleAppointment(int id)
         {
-            ViewBag.Fid = id;
-            ViewBag.Vid = HttpContext.Session.GetString("User_Id");
-            return View();
+            string User_Id = HttpContext.Session.GetString("User_Id");
+            if (!string.IsNullOrWhiteSpace(User_Id))
+            {
+                ViewBag.Fid = id;
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Login", "Home");
+            }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult ScheduleAppointment(Appointment ap)
+        public IActionResult ScheduleAppointment(Appointment ap,int id)
         {
-            //return Json(ap);
-            if (ModelState.IsValid)
+            short Id = Convert.ToInt16(id);
+            string User_Id = HttpContext.Session.GetString("User_Id");
+            if (!string.IsNullOrWhiteSpace(User_Id))
             {
-                SqlCommand cmd = new SqlCommand("sp_scheduleappointment", con);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@Visitor_Id", ap.Visitor_Id);
-                cmd.Parameters.AddWithValue("@Faculty_Id", ap.Faculty_Id);
-                cmd.Parameters.AddWithValue("@From", ap._From);
-                cmd.Parameters.AddWithValue("@To", ap._To);
-                cmd.Parameters.AddWithValue("@Purpose", ap.Purpose);
+                string userid = HttpContext.Session.GetString("User_Id");
+                short Visitor_Id = Convert.ToInt16(userid);
+                if (ModelState.IsValid)
+                {
+                    SqlCommand cmd = new SqlCommand("sp_scheduleappointment", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Visitor_Id", Visitor_Id);
+                    cmd.Parameters.AddWithValue("@Faculty_Id", Id);
+                    cmd.Parameters.AddWithValue("@From", ap._From);
+                    cmd.Parameters.AddWithValue("@To", ap._To);
+                    cmd.Parameters.AddWithValue("@Purpose", ap.Purpose);
 
-                con.Open();
-                //if(user.Registration_Id!=null)
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                    con.Close();
 
-                cmd.ExecuteNonQuery();
-                con.Close();
-
-                return RedirectToAction("Index", "Visitor");
+                    return RedirectToAction("Index", "Visitor");
+                }
+                else
+                {
+                    ViewBag.message = "Something went wrong please try again.";
+                    return View();
+                }
             }
             else
             {
-                ViewBag.message = "Something went wrong please try again.";
-                return View();
+                return RedirectToAction("Login", "Home");
             }
+        }
 
+        [HttpGet]
+        public IActionResult Logout()
+        {
+            string User_Id = HttpContext.Session.GetString("User_Id");
+            if (!string.IsNullOrWhiteSpace(User_Id))
+            {
+                HttpContext.Session.Clear();
+                HttpContext.Session.SetString("User_Id", ""); ;
+                return RedirectToAction("Login", "Home");
+            }
+            else
+            {
+                return RedirectToAction("Login", "Home");
+            }
         }
     }
 }

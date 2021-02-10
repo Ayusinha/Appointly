@@ -20,7 +20,7 @@ namespace Appointly.Controllers
         //private readonly ApplicationUser _auser;
         private readonly IConfiguration _configuration;
         private readonly string _connectionString;
-        private readonly SqlConnection con;
+        private readonly SqlConnection con,con1;
 
         public object Labelinfo { get; private set; }
 
@@ -31,6 +31,7 @@ namespace Appointly.Controllers
             _configuration = iConfig;
             _connectionString = _configuration.GetSection("ConnectionStrings").GetSection("Myconnection").Value;
             con = new SqlConnection(_connectionString);
+            con1 = new SqlConnection(_connectionString);
         }
         public IActionResult Index()
         {
@@ -45,52 +46,59 @@ namespace Appointly.Controllers
             return View();
         }
 
+        public bool CheckUser(Users uc) 
+        {
+            bool ans = false;
+            SqlCommand cmd = new SqlCommand("sp_signin", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Email", uc.Email);
+            cmd.Parameters.AddWithValue("@Pwd", uc.Pwd);
+
+            con.Open();
+            SqlDataReader reader = cmd.ExecuteReader();
+            if (reader.HasRows)
+            {
+                ans = true;
+            }
+            con.Close();
+            return ans;
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Register(Users uc)
         {
-            string role=HttpContext.Request.Form["User_Role"].ToString();
-            string reg_no= HttpContext.Request.Form["Registration_Id"].ToString();
-            string pwd= HttpContext.Request.Form["Pwd"].ToString();
-            string cpwd = HttpContext.Request.Form["confirm_Pwd"].ToString();
-            var arr = _configuration.GetSection("Staff_List");
-            var list = arr.Get<string[]>();
+            if (ModelState.IsValid)
+            {
+                string role = HttpContext.Request.Form["User_Role"].ToString();
+                string reg_no = HttpContext.Request.Form["Registration_Id"].ToString();
+                string pwd = HttpContext.Request.Form["Pwd"].ToString();
+                string cpwd = HttpContext.Request.Form["confirm_Pwd"].ToString();
+                var arr = _configuration.GetSection("Staff_List");
+                var list = arr.Get<string[]>();
 
-            if (pwd != cpwd)
-            {
-                ViewBag.message = "Password and Confirm password field doesn't match enter your details again.";
-                return View();
-            }
-            else
-            {
-                if (role == "faculty" || role == "admin")
+                if (pwd != cpwd)
                 {
-                    if (!list.Contains(reg_no) || reg_no == "")
+                    ViewBag.message = "Password and Confirm password field doesn't match enter your details again.";
+                    return View();
+                }
+                else
+                {
+                    if (role == "faculty" || role == "admin")
                     {
-                        ViewBag.message = "Enter a Valid staff ID for registering as a Faculty or Admin.";
-                        return View();
+                        if (!list.Contains(reg_no) || reg_no == "")
+                        {
+                            ViewBag.message = "Enter a Valid staff ID for registering as a Faculty or Admin.";
+                            return View();
+                        }
                     }
                 }
-            }
-            //_auser.Add(uc);
-            //_auser.SaveChanges();
-            SqlCommand cmd1 = new SqlCommand("sp_signin", con);
-            cmd1.CommandType = CommandType.StoredProcedure;
-            cmd1.Parameters.AddWithValue("@Email", uc.Email);
-            cmd1.Parameters.AddWithValue("@Pwd", uc.Pwd);
-
-            con.Open();
-            SqlDataReader reader = cmd1.ExecuteReader();
-            if (reader.HasRows)
-            {
-                ViewBag.message = "Entered Email is already registered Please Login..";
-                con.Close();
-                return View();
-            }
-            else
-            {
-                con.Close();
-                if (ModelState.IsValid)
+                if (CheckUser(uc) == true)
+                {
+                    ViewBag.success = "Entered Email is already registered Please Login..";
+                    return View();
+                }
+                else
                 {
                     SqlCommand cmd = new SqlCommand("sp_createuser", con);
                     cmd.CommandType = CommandType.StoredProcedure;
@@ -101,13 +109,15 @@ namespace Appointly.Controllers
                     cmd.Parameters.AddWithValue("@Pwd", uc.Pwd);
                     cmd.Parameters.AddWithValue("@User_Role", uc.User_Role);
                     con.Open();
-                    //if(user.Registration_Id!=null)
                     cmd.Parameters.AddWithValue("@Registration_Id", uc.Registration_Id);
                     cmd.ExecuteNonQuery();
                     con.Close();
-
-                    return RedirectToAction("Login", "Home");
+                    ViewBag.success = "User Registered Successfully";
+                    return View();
                 }
+            }
+            else
+            {
                 ViewBag.message = "Something went wrong please try again.";
                 return View();
             }
@@ -122,10 +132,8 @@ namespace Appointly.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Login(Users uc)
         {
-            string email = uc.Email;
-            string pwd = uc.Pwd;
-            using (SqlCommand cmd = new SqlCommand("sp_signin", con))
-            {
+           SqlCommand cmd = new SqlCommand("sp_signin", con);
+            
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@Email", uc.Email);
                 cmd.Parameters.AddWithValue("@Pwd", uc.Pwd);
@@ -145,7 +153,7 @@ namespace Appointly.Controllers
                     con.Close();
                     if(role == "visitor")
                     {
-                        return RedirectToAction("Index","Visitor");
+                        return RedirectToAction("MyMeeting","Visitor");
                     }
                     else if(role == "faculty")
                     {
@@ -167,14 +175,7 @@ namespace Appointly.Controllers
                     ViewBag.message = "You entered wrong email or password, Please try again.";
                     return View();
                 }
-            }
-        }
-
-        [HttpGet]
-        public IActionResult Dashboard()
-        {
-            ViewBag.message = $"Your user_id is {HttpContext.Session.GetString("User_Id")}";
-            return View();
+            
         }
 
         [HttpGet]

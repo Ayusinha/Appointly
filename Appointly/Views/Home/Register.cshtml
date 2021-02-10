@@ -87,6 +87,7 @@
                 <input id="confirm_password" name="confirm_Pwd" type="password" placeholder="Confirm Password" class="form-control bg-white border-left-0 border-md">
                 <span id='message'></span>
             </div>
+            <p id="getoff1"></p>
             <div id="dynamic" class="form-group input-group col-lg-12 mb-4">
                 <div class="input-group-prepend">
                     <span class="input-group-text bg-white px-4 border-md border-right-0">
@@ -99,7 +100,7 @@
                 <input type="submit" value="Create your account" class="btn btn-primary btn-block font-weight-bold" />
             </div>
             <br />
-            <b id="getoff">@ViewBag.message</b>
+            <p id="getoff">@ViewBag.message</p><p id="element">@ViewBag.success</p>
             <br />
             <div class="text-center w-100">
                 <p class="text-muted font-weight-bold">Already Registered? <a href="Login" class="text-primary ml-2">Login</a></p>
@@ -132,6 +133,7 @@
                 $("#dynamic").hide();
             }
         });
+        $("#getoff").css('color', 'red').css('text', 'muted').show().delay(5000).fadeOut();
         //check password and confirm password
         $('#confirm_password').on('keyup', function () {
             if ($('#password').val() == $('#confirm_password').val()) {
@@ -139,8 +141,18 @@
             } else
                 $('#message').html('Not Matching').css('color', 'red').show();
         });
-
-        $("#getoff").css('color', 'red').css('text','muted').show().delay(5000).fadeOut();
+        $('#confirm_password').on('paste', ((e) => {
+            e.preventDefault();
+            $('#getoff1').html("Can't paste any content here").css('color', 'red').show().delay(2000).fadeOut();
+            return false;
+        }));
+        function isEmpty(el) {
+            return $.trim(el.html())
+        }
+        if (isEmpty($('#element'))) {
+            alert($('#element').html());
+            location.href = '/Home/Login';
+        }
     });
 </script>
 

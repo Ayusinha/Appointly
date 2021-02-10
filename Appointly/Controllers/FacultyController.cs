@@ -15,7 +15,6 @@ namespace Appointly.Controllers
         private readonly string _connectionString;
         private readonly SqlConnection con;
 
-
         public FacultyController(IConfiguration iConfig) : base()
         {
             _configuration = iConfig;

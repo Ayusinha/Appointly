@@ -50,7 +50,7 @@
 
 <script>
     $(document).ready(() => {
-        if ($("#getoff").val == "User Profile Updated...") {
+        if ($("#getoff").html().trim() == "User Profile Updated...") {
             $("#getoff").css('color', 'green').css('text', 'muted').show().delay(5000).fadeOut();
         } else {
             $("#getoff").css('color', 'red').css('text', 'muted').show().delay(5000).fadeOut();
