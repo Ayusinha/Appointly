@@ -7,21 +7,21 @@ using System.Threading.Tasks;
 
 namespace Appointly.Models
 {
-    public class Users
+    public class User
     {
         [Key]
         public short Id { get; set; }
 
         [Required(ErrorMessage = "Please Select a Role..")]
-        [Display(Name = "User_Role")]
+        [Display(Name = "Role")]
         public string User_Role { get; set; }
         
         [Required(ErrorMessage = "Please Enter Firstname..")]
-        [Display(Name = "FirstName")]
+        [Display(Name = "First Name")]
         public string FirstName { get; set; }
 
         [Required(ErrorMessage = "Please Enter Lastname..")]
-        [Display(Name = "LastName")]
+        [Display(Name = "Last Name")]
         public string LastName { get; set; }
 
         [Required(ErrorMessage = "Please Enter Email..")]

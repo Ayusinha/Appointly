@@ -1,0 +1,70 @@
+﻿@model IEnumerable<Appointly.Models.User>
+@{
+    ViewData["Title"] = "FacultyInfo";
+    Layout = "~/Views/Visitor/Shared/_Layout_Visitor.cshtml";
+}
+
+<div class="container">
+    <form class="form-inline">
+        <div class="form-group btn-block col-lg-12 my-3 mr-5">
+            <input type="text" id="search" placeholder="Search by First Name, Last Name, Email or Phone number" class="form-control btn-block col-lg-12" />
+        </div>
+    </form>
+    <br />
+    <h2>List of Faculties</h2>
+    <table class="table table-hover table-responsive-lg">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.LastName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Email)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Phone)
+                </th>
+            </tr>
+        </thead>
+        <tbody id="myTable">
+            @foreach (var uc in Model)
+            {
+                <tr class="search">
+                    <td>
+                        <a href="/Visitor/Details/@uc.Id" class="link" style="text-decoration:none; color:black">
+                            @Html.DisplayFor(modelItem => uc.FirstName)
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/Visitor/Details/@uc.Id" class="link" style="text-decoration:none; color:black">
+                            @Html.DisplayFor(modelItem => uc.LastName)
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/Visitor/Details/@uc.Id" class="link" style="text-decoration:none; color:black">
+                            @Html.DisplayFor(modelItem => uc.Email)
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/Visitor/Details/@uc.Id" class="link" style="text-decoration:none; color:black">
+                            @Html.DisplayFor(modelItem => uc.Phone)
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<script>
+    $(document).ready(() => {
+        $("#search").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#myTable tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        })
+    });
+</script>

@@ -3,18 +3,12 @@
 
 @{ 
     ViewData["Title"] = "Create a new Appointmet ";
-    Layout = "~/Views/Shared/_Layout_Visitor.cshtml"; 
+    Layout = "~/Views/Visitor/Shared/_Layout_Visitor.cshtml"; 
 }
 
 <div class="ml-auto">
     <form asp-action="ScheduleAppointment" asp-route-id="@ViewBag.Fid">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-        @*<label>Faculty Id</label>
-        <div class="ids form-group input-group col-lg-12 mb-4">
-            <input asp-for="Faculty_Id" value="@ViewBag.Fid" placeholder="Faculty_Id" class="form-control bg-white border-md " />
-            <span asp-validation-for="Faculty_Id" class="text-danger"></span>
-        </div>*@
 
         <label>From </label>
         <div class="form-group input-group col-lg-12 mb-4">
@@ -39,6 +33,7 @@
         </div>
         <br />
         <b id="getoff">@ViewBag.message</b>
+        <p id="element">@ViewBag.success</p>
         <br />
     </form>
 </div>
@@ -47,8 +42,16 @@
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
 
-<script>$(document).ready(() => {
+<script>
+    $(document).ready(() => {
 
         $(".ids").hide();
-
-    });</script>
+        function isEmpty(el) {
+            return $.trim(el.html())
+        }
+        if (isEmpty($('#element'))) {
+            alert($('#element').html());
+            location.href = '/Visitor/Index';
+        }
+    });
+</script>

@@ -1,7 +1,7 @@
-﻿@model Appointly.Models.Users;
+﻿@model Appointly.Models.User;
 @{
     ViewData["Title"] = "Profile";
-    Layout = "~/Views/Shared/_Layout_Visitor.cshtml";
+    Layout = "~/Views/Visitor/Shared/_Layout_Visitor.cshtml";
 }
 
 <h1> Edit</h1>
@@ -45,15 +45,11 @@
 </div>
 
 <div>
-    <a asp-action="Index"> back to Homepage</a>
+    <a asp-action="MyMeeting">Homepage</a>
 </div>
 
 <script>
     $(document).ready(() => {
-        if ($("#getoff").html().trim() == "User Profile Updated...") {
-            $("#getoff").css('color', 'green').css('text', 'muted').show().delay(5000).fadeOut();
-        } else {
-            $("#getoff").css('color', 'red').css('text', 'muted').show().delay(5000).fadeOut();
-        }
+        $("#getoff").css('color', 'green').css('text', 'muted').show().delay(5000).fadeOut();
     });
 </script>

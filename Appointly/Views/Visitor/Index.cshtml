@@ -1,59 +1,80 @@
-﻿@model IEnumerable<Appointly.Models.Users>
-@{
-    ViewData["Title"] = "Index";
-    Layout = "~/Views/Shared/_Layout_Visitor.cshtml";
+﻿@model Appointly.ViewModel.AppointmentStatusViewModel
+@{ 
+    ViewData["Title"] = "MyMeeting";
+    Layout = "~/Views/Visitor/Shared/_Layout_Visitor.cshtml"; 
 }
 
 <div class="container">
+    <h2>MyMeeting</h2>
+    <div class="dropdown show">
+        <a class="btn btn-outline-dark dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            All Meetings <span class="badge badge-pill badge-dark">@Model.Total</span>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <a class="dropdown-item" asp-controller="Visitor" asp-action="Index" asp-route-id="1">Pending Meetings <span class="badge badge-pill badge-info"> @Model.Pending </span></a>
+            <a class="dropdown-item" asp-controller="Visitor" asp-action="Index" asp-route-id="2">Approved Meetings <span class="badge badge-pill badge-primary"> @Model.Approved </span></a>
+            <a class="dropdown-item" asp-controller="Visitor" asp-action="Index" asp-route-id="3">Declined Meetings <span class="badge badge-pill badge-danger"> @Model.Rejected</span></a>
+            <a class="dropdown-item" asp-controller="Visitor" asp-action="Index" asp-route-id="4">Completed Meetings <span class="badge badge-pill badge-success"> @Model.Completed</span></a>
+        </div>
+    </div>
+</div>
+
+<div class="container jumbotron table table-striped">
+
+    @if (ViewBag.status == 1)
+    {
+<h2> Pending Meetings </h2>}
+    @if (ViewBag.status == 2)
+    {
+<h2> Approved meetings </h2>}
+    @if (ViewBag.status == 3)
+    {
+<h2>Declined Meetings </h2>}
+    @if (ViewBag.status == 4)
+    {
+<h2>Completed Meetings </h2>}
+    @if (ViewBag.status == 0)
+    {
+<h2> All Meetings </h2>}
     <form class="form-inline">
         <div class="form-group btn-block col-lg-12 my-3 mr-5">
             <input type="text" id="search" placeholder="Search by First Name, Last Name, Email or Phone number" class="form-control btn-block col-lg-12" />
         </div>
     </form>
-    <br />
-    <h2>List of Faculties</h2>
-    <table class="table table-hover table-responsive-lg">
+
+
+    <table class="table table-striped">
         <thead>
             <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.FirstName)  
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.LastName)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Email)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Phone)
-                </th>
+                <th> faculty name </th>
+                <th>_From</th>
+                <th>_To</th>
+                <th>Purpose</th>
             </tr>
         </thead>
         <tbody id="myTable">
-            @foreach (var uc in Model)
+
+            @foreach (var app in Model.appointments)
             {
-            <tr class="search">
-                <td>
-                    <a href="Visitor/Details/@uc.Id" class="link" style="text-decoration:none; color:black">
-                        @Html.DisplayFor(modelItem => uc.FirstName)
-                    </a>
-                </td>
-                <td>
-                    <a href="Visitor/Details/@uc.Id" class="link" style="text-decoration:none; color:black">
-                        @Html.DisplayFor(modelItem => uc.LastName)
-                    </a>
-                </td>
-                <td>
-                    <a href="Visitor/Details/@uc.Id" class="link" style="text-decoration:none; color:black">
-                        @Html.DisplayFor(modelItem => uc.Email)
-                    </a>
-                </td>
-                <td>
-                    <a href="Visitor/Details/@uc.Id" class="link" style="text-decoration:none; color:black">
-                        @Html.DisplayFor(modelItem => uc.Phone)
-                    </a>
-                </td>
-            </tr>
+                <tr class="search">
+                    <td>
+                        @Html.DisplayFor(modelItem => app.Extra)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => app._From)
+
+                    </td>
+                    <td>
+
+                        @Html.DisplayFor(modelItem => app._To)
+
+                    </td>
+                    <td>
+
+                        @Html.DisplayFor(modelItem => app.Purpose)
+
+                    </td>
+                </tr>            
             }
         </tbody>
     </table>

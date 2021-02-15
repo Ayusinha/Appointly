@@ -1,17 +1,16 @@
 ﻿@model IEnumerable<Appointly.Models.Appointment>
 @{
     ViewData["Title"] = "Index";
-    Layout = "~/Views/Shared/_Layout_Visitor.cshtml";
+    Layout = "~/Views/Faculty/Shared/_Layout_Faculty.cshtml";
 }
-
 <div class="dropdown">
     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
         All Meetings
     </button>
     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-        <li><a class="dropdown-item" href="#">New Meetings</a></li>
-        <li><a class="dropdown-item" href="#">Approved</a></li>
-        <li><a class="dropdown-item" href="#">Declined</a></li>
+        <li><a class="dropdown-item" asp-action="Meeting" asp-controller="Faculty" asp-route-id="1">Completed</a></li>
+        <li><a class="dropdown-item" asp-action="Meeting" asp-controller="Faculty" asp-route-id="2">Approved</a></li>
+        <li><a class="dropdown-item" asp-action="Meeting" asp-controller="Faculty" asp-route-id="3">Declined</a></li>
     </ul>
 </div>
 
@@ -26,7 +25,7 @@
             <tr>
                 <th>#</th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Visitor_Id.FirstName)
+                    @Html.DisplayNameFor(model => model.Visitor_Id)
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model._From)
@@ -48,11 +47,12 @@
                 var a = 0;
                 a += 1;
                 <tr class="search">
+
                     <td>
                         @a
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => ap.Visitor_Id.FirstName)
+                        @Html.DisplayFor(modelItem => ap.Visitor_Id)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => ap._From)
@@ -64,17 +64,19 @@
                         @Html.DisplayFor(modelItem => ap.Purpose)
                     </td>
                     <td>
-                        <div class="input-group">
-                            <span class="input-group-text">@Html.DisplayNameFor(model => model.Response)</span>
-                            <textarea class="form-control" aria-label="With textarea"></textarea>
-                        </div>
+                        <form id="@a" method="POST" asp-controller="Faculty" asp-action="Index" asp-route-id="@ap.Id"></form>
+                    </td>
+
+                    <td>
+                        <textarea form="@a" class="form-control" name="Response" aria-label="With textarea"></textarea>
                     </td>
                     <td>
-                        <a class="btn btn-success" type="submit" value="Approved" role="button">Approve</a>
-                        <a class="btn btn-danger" type="submit" value="Declined" role="button">Decline</a>
+                        <input form="@a" name="submit" type="submit" value="Approve" class="btn btn-success"/>
+                        <input form="@a" name="submit" type="submit" value="Decline" class="btn btn-danger"/>
                     </td>
+
                 </tr>
-            }
+             }
         </tbody>
     </table>
 </div>

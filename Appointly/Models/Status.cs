@@ -9,7 +9,7 @@ namespace Appointly.Models
     public class Status
     {
         [Key]
-        public short Id { get; set; }
+        public byte Id { get; set; }
 
         [Display(Name = "Status")]
         public string Status_value { get; set; }

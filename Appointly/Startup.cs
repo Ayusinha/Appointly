@@ -1,3 +1,4 @@
+using Appointly.DAL;
 using Appointly.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -20,7 +21,6 @@ namespace Appointly
         }
 
         public IConfiguration Configuration { get; }
-
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -29,6 +29,8 @@ namespace Appointly
                 options.IdleTimeout = TimeSpan.FromDays(1);
             });
             //services.AddDbContext<ApplicationUser>(options => options.UseSqlServer(Configuration.GetConnectionString("Myconnection")));
+            services.AddSingleton<IUserRepository, UserRepository>();
+            services.AddSingleton<IVisitorRepository, VisitorRepository>();
             services.AddSingleton<IConfiguration>(Configuration);
         }
 
@@ -47,7 +49,6 @@ namespace Appointly
             app.UseSession();
             app.UseRouting();
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
@@ -59,6 +60,12 @@ namespace Appointly
                 endpoints.MapControllerRoute(
                     name: "visitor",
                     pattern: "{controller=Visitor}/{action=Index}/{id?}");
+            });
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute(
+                    name: "faculty",
+                    pattern: "{controller=Faculty}/{action=Index}/{id?}");
             });
         }
     }

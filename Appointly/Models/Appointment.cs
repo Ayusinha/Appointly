@@ -12,7 +12,7 @@ namespace Appointly.Models
         [Key]
         public short Id { get; set; }
 
-        public virtual Users Visitor_Id { get; set; }
+        public virtual short Visitor_Id { get; set; }
 
         public short Faculty_Id { get; set; }
 
@@ -32,11 +32,13 @@ namespace Appointly.Models
 
         public string Response { get; set; }
 
-        public virtual short _Status { get; set; }
+        public virtual byte _Status { get; set; }
 
         [ForeignKey("Visitor_Id")]
-        public virtual Users User { get; set; }
+        public virtual User Visitor { get; set; }
         [ForeignKey("_Status")]
         public virtual Status Statuses { get; set; }
+
+        public string Extra { get; set; }
     }
 }
