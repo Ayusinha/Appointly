@@ -15,9 +15,12 @@ namespace Appointly.Controllers
     public class VisitorController : Controller
     {
         private readonly IVisitorRepository visitorRepository;
-        public VisitorController(IVisitorRepository visitorRepository)
+        private readonly IUserRepository userRepository;
+
+        public VisitorController(IVisitorRepository visitorRepository,IUserRepository userRepository)
         {
             this.visitorRepository = visitorRepository;
+            this.userRepository = userRepository;
         }
         public IActionResult Index(int? id)
         {
@@ -55,7 +58,7 @@ namespace Appointly.Controllers
                 return NotFound();
             }
             short userId = Convert.ToInt16(id);
-            User user = visitorRepository.Update(userId);
+            User user = userRepository.Get(userId);
             return View(user);
         }
         [HttpPost]
@@ -68,7 +71,7 @@ namespace Appointly.Controllers
             {
                 return NotFound();
             }
-            int num = visitorRepository.Update(user);
+            int num = userRepository.Update(user);
             if (num != -1)
             {
                 ViewBag.message = "User Profile Updated.";

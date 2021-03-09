@@ -6,12 +6,10 @@ using System.Threading.Tasks;
 
 namespace Appointly.Models
 {
-    public enum Status
+    public enum Role
     {
-        Pending = 1,
-        Accept,
-        Decline,
-        Completed,
-        Cancelled
+        Visitor = 1,
+        Faculty,
+        Admin
     }
 }

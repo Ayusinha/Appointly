@@ -9,9 +9,13 @@ namespace Appointly.DAL
 {
     public interface IUserRepository
     {
-        public int Create(User uc);
+        public int Create(User user);
 
-        public User Login(User uc);
+        public User Login(User user);
+
+        public User Get(short userId);
+
+        public int Update(User user);
 
         public List<string> ExistingFaculties();
     }

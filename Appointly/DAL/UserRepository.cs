@@ -18,14 +18,15 @@ namespace Appointly.DAL
         public UserRepository(IConfiguration iConfig)
         {
             connectionString = iConfig.GetSection("ConnectionStrings").GetSection("Myconnection").Value;
-            Existing_staff = iConfig.GetSection("Staff_List");
+            Existing_staff = iConfig.GetSection("StaffRecords");
         }
+
         public int Create(User uc)
         {
-            int isUserAlreadyExist = 0;
+            int doesUserAlreadyExist = 0;
             using (SqlConnection con = new SqlConnection(connectionString))
             {
-                using (SqlCommand cmd = new SqlCommand("sp_createuser", con))
+                using (SqlCommand cmd = new SqlCommand("CreateUserIfNotExist", con))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@FirstName", uc.FirstName);
@@ -33,35 +34,70 @@ namespace Appointly.DAL
                     cmd.Parameters.AddWithValue("@Email", uc.Email);
                     cmd.Parameters.AddWithValue("@Phone", uc.Phone);
                     cmd.Parameters.AddWithValue("@Pwd", uc.Pwd);
-                    cmd.Parameters.AddWithValue("@User_Role", uc.User_Role);
-                    cmd.Parameters.AddWithValue("@Registration_Id", uc.Registration_Id);
+                    cmd.Parameters.AddWithValue("@UserRole", uc.UserRole);
+                    cmd.Parameters.AddWithValue("@RegistrationId", uc.RegistrationId);
                     con.Open();
                     using (SqlDataReader rdr = cmd.ExecuteReader())
                     {
-                        bool next_query = true;
-                        while (next_query == true)
+                        if (rdr.HasRows)
                         {
-                            if (rdr.HasRows)
-                            {
-                                isUserAlreadyExist = 1;
-                                break;
-                            }
-                            else
-                            {
-                                if (rdr.NextResult())
-                                {
-                                    next_query = true;
-                                }
-                                else
-                                {
-                                    next_query = false;
-                                }
-                            }
+                            doesUserAlreadyExist = 1;
+                        }
+                        rdr.NextResult();
+                    }
+                }
+            }
+            return doesUserAlreadyExist;
+        }
+
+        public User Get(short userId)
+        {
+            User user = null;
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand("GetUserById", con))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Id", userId);
+                    con.Open();
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        if (dr.HasRows) user = new User();
+                        while (dr.Read())
+                        {
+                            user.Id = (short)Convert.ToInt32(dr["Id"].ToString());
+                            user.FirstName = dr["FirstName"].ToString();
+                            user.LastName = dr["LastName"].ToString();
+                            user.DateOfBirth = dr["DateOfBirth"].ToString();
+                            user.Gender = dr["Gender"].ToString();
+                            user.Phone = dr["Phone"].ToString();
                         }
                     }
                 }
             }
-            return isUserAlreadyExist;
+            return user;
+        }
+
+        public int Update(User user)
+        {
+            int isUserUpdated = 0;
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand("UpdateUserById", con))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Id", user.Id);
+                    cmd.Parameters.AddWithValue("@FirstName", user.FirstName);
+                    cmd.Parameters.AddWithValue("@LastName", user.LastName);
+                    cmd.Parameters.AddWithValue("@Phone", user.Phone);
+                    cmd.Parameters.AddWithValue("@DateOfBirth", user.DateOfBirth);
+                    cmd.Parameters.AddWithValue("@Gender", user.Gender);
+                    con.Open();
+                    isUserUpdated = cmd.ExecuteNonQuery();
+                    
+                }
+            }
+            return isUserUpdated;
         }
 
         public List<string> ExistingFaculties()
@@ -74,7 +110,7 @@ namespace Appointly.DAL
             User user = null;
             using (SqlConnection con = new SqlConnection(connectionString))
             {
-                using (SqlCommand cmd = new SqlCommand("sp_signin", con))
+                using (SqlCommand cmd = new SqlCommand("ValidateUser", con))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@Email", uc.Email);
@@ -83,11 +119,11 @@ namespace Appointly.DAL
                     con.Open();
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        if (reader.HasRows) user = new User();
+                        user = new User();
                         while (reader.Read())
                         {
-                            user.Id = (short)Convert.ToInt32(reader["Id"]);
-                            user.User_Role = Convert.ToString(reader["User_Role"]);
+                            user.Id = Convert.ToInt16(reader["Id"]);
+                            user.UserRole = (Role)Convert.ToInt32(reader["UserRole"]);
                         }
                     }
                 }

@@ -1,5 +1,4 @@
 ﻿@model Appointly.Models.User
-
 @{
     ViewData["Title"] = "Register";
 }
@@ -21,13 +20,13 @@
                         <i class="fa fa-black-tie text-muted"></i>
                     </span>
                 </div>
-                <select id="job" asp-for="User_Role" name="User_Role" class="form-control custom-select bg-white border-left-0 border-md">
+                <select id="job" asp-for="UserRole" name="UserRole" class="form-control custom-select bg-white border-left-0 border-md">
                     <option selected disabled value="">Choose your Role</option>
-                    <option value="visitor">Visitor</option>
-                    <option value="faculty">Faculty</option>
-                    <option value="admin">Admin</option>
+                    <option value="Visitor">Visitor</option>
+                    <option value="Faculty">Faculty</option>
+                    <option value="Admin">Admin</option>
                 </select>
-                <span asp-validation-for="User_Role" class="text-danger"></span>
+                <span asp-validation-for="UserRole" class="text-danger"></span>
             </div>
 
             <div class="form-group input-group col-lg-12 mb-4">
@@ -94,7 +93,7 @@
                         <i class="fa fa-registered text-muted"></i>
                     </span>
                 </div>
-                <input asp-for="Registration_Id" name="Registration_Id" placeholder="Registration_Id (Only for Faculty and Admin)" class="form-control bg-white border-left-0 border-md" />
+                <input asp-for="RegistrationId" name="Registration_Id" placeholder="Enter Registration Id (Only for Faculty and Admin)" class="form-control bg-white border-left-0 border-md" />
             </div>
             <div class="form-group col-lg-12 mx-auto mb-0">
                 <input type="submit" value="Create your account" class="btn btn-primary btn-block font-weight-bold" />
@@ -112,8 +111,6 @@
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
 <script>
-    // For Demo Purpose [Changing input group text on focus]
-
     $(document).ready(() => {
         /*debugger*/
         $('input, select').on('focus', () => {
@@ -128,8 +125,7 @@
             var isAnySelected = false;
             var optionSelected = $("option:selected", this);
             var valueSelected = this.value;
-            //console.log(valueSelected);
-            if (valueSelected == "faculty" || valueSelected == "admin") {
+            if (valueSelected == "Faculty" || valueSelected == "Admin") {
                 $("#dynamic").show();
             } else {
                 $("#dynamic").hide();

@@ -20,13 +20,6 @@ namespace Appointly.DAL
             connectionString = iConfig.GetSection("ConnectionStrings").GetSection("Myconnection").Value;
         }
 
-
-        public void AddAppointment(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-
         public void AddAppointment(Appointment appointment, int id,short Visitor_Id)
         {
             using (SqlConnection con = new SqlConnection(connectionString))
@@ -36,14 +29,13 @@ namespace Appointly.DAL
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@Visitor_Id", Visitor_Id);
                     cmd.Parameters.AddWithValue("@Faculty_Id", id);
-                    cmd.Parameters.AddWithValue("@From", appointment._From);
-                    cmd.Parameters.AddWithValue("@To", appointment._To);
+                    cmd.Parameters.AddWithValue("@From", appointment.From);
+                    cmd.Parameters.AddWithValue("@To", appointment.To);
                     cmd.Parameters.AddWithValue("@Purpose", appointment.Purpose);
                     con.Open();
                     cmd.ExecuteNonQuery();
                 }
             }
-           // throw new NotImplementedException();
         }
 
 
@@ -54,7 +46,7 @@ namespace Appointly.DAL
             {
                
                 SqlCommand cmd1 = new SqlCommand("sp_getmeetingdetail", con);
-                cmd1.Parameters.AddWithValue("@fid", id);
+                cmd1.Parameters.AddWithValue("@FacultyId", id);
                 cmd1.CommandType = CommandType.StoredProcedure;
 
                 con.Open();
@@ -64,9 +56,9 @@ namespace Appointly.DAL
                     while (dr.Read())
                     {
                         Appointment ap = new Appointment();
-                        ap._From = (DateTime)dr["_From"];
-                        ap._To = (DateTime)dr["_To"];
-                        ap.Faculty_Id = (short)Convert.ToInt32(dr["faculty_Id"].ToString());
+                        ap.From = (DateTime)dr["From"];
+                        ap.To = (DateTime)dr["To"];
+                        ap.FacultyId = (short)Convert.ToInt32(dr["FacultyId"]);
                         ap.Extra = (string)dr["FirstName"];
                         ap.Extra += " ";
                         ap.Extra += dr["LastName"];
@@ -76,7 +68,6 @@ namespace Appointly.DAL
             }
             return appointments;
         }
-
 
         public IEnumerable<User> GetFaculty()
         {
@@ -94,7 +85,6 @@ namespace Appointly.DAL
                         users= new List<User>(); ;
                         while (dr.Read())
                         {
-                         //   users = 
                             User uc = new User();
                             uc.Id = (short)Convert.ToInt32(dr["Id"].ToString());
                             uc.FirstName = dr["FirstName"].ToString();
@@ -132,23 +122,23 @@ namespace Appointly.DAL
                                 switch (i)
                                 {
                                     case 1:
-                                       appointmentStatusViewModel.Pending = (short)Convert.ToInt32(dr["meeting_count"].ToString());
+                                       appointmentStatusViewModel.Pending = Convert.ToInt16(dr["meeting_count"]);
                                        
                                         break;
                                     case 2:
-                                       appointmentStatusViewModel.Approved = (short)Convert.ToInt32(dr["meeting_count"].ToString());
+                                       appointmentStatusViewModel.Approved = Convert.ToInt16(dr["meeting_count"]);
                                        
                                         break;
                                     case 3:
-                                       appointmentStatusViewModel.Rejected= (short)Convert.ToInt32(dr["meeting_count"].ToString());
+                                       appointmentStatusViewModel.Rejected= Convert.ToInt16(dr["meeting_count"]);
                                         
                                         break;
                                     case 4:
-                                        appointmentStatusViewModel.Completed = (short)Convert.ToInt32(dr["meeting_count"].ToString());
+                                        appointmentStatusViewModel.Completed = Convert.ToInt16(dr["meeting_count"]);
                                         
                                         break;
                                     case 5:
-                                        appointmentStatusViewModel.Total = (short)Convert.ToInt32(dr["meeting_count"].ToString());
+                                        appointmentStatusViewModel.Total = Convert.ToInt16(dr["meeting_count"]);
                                         break;
                                 }
 
@@ -162,8 +152,8 @@ namespace Appointly.DAL
                             app.Extra = Convert.ToString(dr["FirstName"]);
                             app.Extra += ' ';
                             app.Extra += (string)dr["LastName"];
-                            app._From = (DateTime)dr["_From"];
-                            app._To = (DateTime)dr["_To"];
+                            app.From = (DateTime)dr["_From"];
+                            app.To = (DateTime)dr["_To"];
                             app.Purpose = Convert.ToString(dr["Purpose"]);
                             appointments.Add(app);
                         }
@@ -173,59 +163,6 @@ namespace Appointly.DAL
             }
             return appointmentStatusViewModel;
           
-        }
-
-
-        public User Update(short id)
-        {
-            short userId = Convert.ToInt16(id);
-            User user = null;
-            using (SqlConnection con = new SqlConnection(connectionString))
-            {
-                using (SqlCommand cmd = new SqlCommand("sp_getuserbyid", con))
-                {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@Id", userId);
-                    con.Open();
-                    using (SqlDataReader dr = cmd.ExecuteReader())
-                    {
-                        if (dr.HasRows) user = new User();
-                        while (dr.Read())
-                        {
-                            user.Id = (short)Convert.ToInt32(dr["Id"].ToString());
-                            user.FirstName = dr["FirstName"].ToString();
-                            user.LastName = dr["LastName"].ToString();
-                            user.Date_of_birth = dr["Date_of_birth"].ToString();
-                            user.Gender = dr["Gender"].ToString();
-                            user.Phone = dr["Phone"].ToString();
-                        }
-                    }
-                }
-            }
-            return user;
-        }
-
-        public int Update(User user)
-        {
-            int num = 0;
-            using (SqlConnection con = new SqlConnection(connectionString))
-            {
-                using (SqlCommand cmd = new SqlCommand("sp_updateuser", con))
-                {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@Id", user.Id);
-                    cmd.Parameters.AddWithValue("@FirstName", user.FirstName);
-                    cmd.Parameters.AddWithValue("@LastName", user.LastName);
-                    cmd.Parameters.AddWithValue("@Phone", user.Phone);
-                    cmd.Parameters.AddWithValue("@Date_of_birth", user.Date_of_birth);
-                    cmd.Parameters.AddWithValue("@Gender", user.Gender);
-                    con.Open();
-                    num = cmd.ExecuteNonQuery();
-                   
-                }
-            }
-            return num;
-            
         }
     }
 }

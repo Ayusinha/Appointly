@@ -15,10 +15,6 @@ namespace Appointly.DAL
 
         public IEnumerable<Appointment> GetFacultyAppointment(int id); //details
 
-        public User Update(short id); //profile http get
-
-        public int Update(User user); //profile http post 
-
         public void AddAppointment(Appointment appointment, int id, short Vid); //schedule appointment http post 
 
     }

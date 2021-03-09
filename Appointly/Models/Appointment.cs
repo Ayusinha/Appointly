@@ -9,35 +9,28 @@ namespace Appointly.Models
 {
     public class Appointment
     {
-        [Key]
         public short Id { get; set; }
 
-        public virtual short Visitor_Id { get; set; }
+        public short VisitorId { get; set; }
 
-        public short Faculty_Id { get; set; }
+        public short FacultyId { get; set; }
 
         [Display(Name = "From")]
-        public DateTime _From { get; set; }
+        public DateTime From { get; set; }
 
         [Display(Name = "To")]
-        public DateTime _To { get; set; }
+        public DateTime To { get; set; }
 
-        public DateTime _Entry { get; set; }
+        public DateTime Entry { get; set; }
 
-
-        public DateTime _Exit { get; set; }
+        public DateTime Exit { get; set; }
 
         [Display(Name = "Purpose")]
         public string Purpose { get; set; }
 
         public string Response { get; set; }
 
-        public virtual byte _Status { get; set; }
-
-        [ForeignKey("Visitor_Id")]
-        public virtual User Visitor { get; set; }
-        [ForeignKey("_Status")]
-        public virtual Status Statuses { get; set; }
+        public Status Status { get; set; }
 
         public string Extra { get; set; }
     }

@@ -45,10 +45,10 @@ namespace Appointly.Controllers
                             {
                                 var app = new Appointment();
                                 app.Id = (short)Convert.ToInt32(reader["Id"].ToString());
-                                app._From = (DateTime)reader["_From"];
-                                app._To = (DateTime)reader["_To"];
+                                app.From = (DateTime)reader["_From"];
+                                app.To = (DateTime)reader["_To"];
                                 app.Purpose = reader["purpose"].ToString();
-                                app.Visitor_Id = (short)reader["Visitor_Id"];
+                                app.VisitorId = (short)reader["Visitor_Id"];
                                 appoint.Add(app);
                             }
                         }
@@ -109,7 +109,7 @@ namespace Appointly.Controllers
                     uc.Id = (short)Convert.ToInt32(dr["Id"].ToString());
                     uc.FirstName = dr["FirstName"].ToString();
                     uc.LastName = dr["LastName"].ToString();
-                    uc.Date_of_birth = dr["Date_of_birth"].ToString();
+                    uc.DateOfBirth = dr["Date_of_birth"].ToString();
                     uc.Gender = dr["Gender"].ToString();
                     uc.Phone = dr["Phone"].ToString();
                 }
@@ -134,7 +134,7 @@ namespace Appointly.Controllers
                 cmd.Parameters.AddWithValue("@FirstName", userEmp.FirstName);
                 cmd.Parameters.AddWithValue("@LastName", userEmp.LastName);
                 cmd.Parameters.AddWithValue("@Phone", userEmp.Phone);
-                cmd.Parameters.AddWithValue("@Date_of_birth", userEmp.Date_of_birth);
+                cmd.Parameters.AddWithValue("@Date_of_birth", userEmp.DateOfBirth);
                 cmd.Parameters.AddWithValue("@Gender", userEmp.Gender);
                 con.Open();
                 int num = cmd.ExecuteNonQuery();

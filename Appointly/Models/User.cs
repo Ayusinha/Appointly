@@ -9,12 +9,11 @@ namespace Appointly.Models
 {
     public class User
     {
-        [Key]
         public short Id { get; set; }
 
         [Required(ErrorMessage = "Please Select a Role..")]
         [Display(Name = "Role")]
-        public string User_Role { get; set; }
+        public Role UserRole { get; set; }
         
         [Required(ErrorMessage = "Please Enter Firstname..")]
         [Display(Name = "First Name")]
@@ -42,9 +41,9 @@ namespace Appointly.Models
         public string Gender { get; set; }
 
         [Display(Name = "Date of birth")]
-        public string Date_of_birth { get; set; }
+        public string DateOfBirth { get; set; }
 
         [Display(Name = "Registration Id")]
-        public string Registration_Id { get; set; }
+        public string RegistrationId { get; set; }
     }
 }

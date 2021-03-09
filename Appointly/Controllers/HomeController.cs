@@ -42,10 +42,11 @@ namespace Appointly.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Register(User uc)
         {
+            //return Json(uc);
             if (ModelState.IsValid)
             {
-                string role = Convert.ToString(HttpContext.Request.Form["User_Id"]);
-                string reg_no = Convert.ToString(HttpContext.Request.Form["Registration_Id"]);
+                short role = Convert.ToInt16(HttpContext.Request.Form["UserId"]);
+                string reg_no = Convert.ToString(HttpContext.Request.Form["RegistrationId"]);
                 string pwd = Convert.ToString(HttpContext.Request.Form["Pwd"]);
                 string cpwd = Convert.ToString(HttpContext.Request.Form["confirm_Pwd"]);
                 var list = userRepository.ExistingFaculties();
@@ -57,7 +58,7 @@ namespace Appointly.Controllers
                 }
                 else
                 {
-                    if (role == "faculty" || role == "admin")
+                    if (role == 2 || role == 3)
                     {
                         if (!list.Contains(reg_no) || reg_no == "")
                         {
@@ -66,6 +67,7 @@ namespace Appointly.Controllers
                         }
                     }
                 }
+
                 if(isUserAlreadyExist == 1)
                 {
                     ViewBag.message = "Entered Email is already registered Please Enter Again";
@@ -94,25 +96,27 @@ namespace Appointly.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Login(User user)
         {
-            User uc = userRepository.Login(user);
+            User uc = new User();
+            uc = userRepository.Login(user);
             if (uc != null) { 
                 //setting value into a session key
                 HttpContext.Session.SetString("User_Id", Convert.ToString(uc.Id));
-                if (uc.User_Role == "visitor")
+                HttpContext.Session.SetString("UserRole", Convert.ToString(uc.UserRole));
+                if (Convert.ToInt32(uc.UserRole) == 1)
                 {
                     return RedirectToAction("Index", "Visitor");
                 }
-                else if (uc.User_Role == "faculty")
+                else if (Convert.ToInt32(uc.UserRole) == 2)
                 {
                     return RedirectToAction("Index", "Faculty");
                 }
-                else if (uc.User_Role == "admin")
+                else if (Convert.ToInt32(uc.UserRole) == 3)
                 {
                     return RedirectToAction("Index", "Admin");
                 }
                 else
                 {
-                    ViewBag.message = "You entered wrong email or password, Please try again.";
+                    ViewBag.message = "You entered wrong email or password, Please try again";
                     return View();
                 }
             }
@@ -121,17 +125,6 @@ namespace Appointly.Controllers
                 ViewBag.message = "You entered wrong email or password, Please try again.";
                 return View();
             }
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }
